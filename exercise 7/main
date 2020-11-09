@@ -1,0 +1,144 @@
+#include <cstring> 
+#include <iostream> 
+#include <stack> 
+  
+using namespace std; 
+  
+#define N 4 
+#define M 5 
+  
+class node { 
+public: 
+    int x, y; 
+    int way; 
+  
+    node(int i, int j) 
+    { 
+        x = i; 
+        y = j; 
+          
+        // Initially way 
+        // set to 0 
+       way = 0; 
+    } 
+}; 
+  
+// maze of n*m matrix 
+int n = N, m = M; 
+  
+// Coordinates of food 
+int wx, wy; 
+bool visited[N][M]; 
+  
+bool isReachable(int maze[N][M]) 
+{ 
+    // Initially starting at (0, 0). 
+    int i = 0, j = 0; 
+      
+    stack<node> s; 
+      
+    node temp(i, j); 
+      
+    s.push(temp); 
+  
+    while (!s.empty()) { 
+  
+        // Pop the top node and move to the 
+        // left, right, top, down or retract  
+        // back according the value of node's 
+        // way variable. 
+        temp = s.top(); 
+        int d = temp.way; 
+        i = temp.x, j = temp.y; 
+  
+        // Increment the way and 
+        // push the node in the stack again. 
+        temp.way++; 
+        s.pop(); 
+        s.push(temp); 
+  
+        // If we reach the way 
+        // return true 
+        if (i == wx and j == wy) { 
+            return true; 
+        } 
+  
+        // Checking the Up way. 
+        if (d == 0) { 
+            if (i - 1 >= 0 and maze[i - 1][j] and  
+                                    visited[i - 1][j]) { 
+                node temp1(i - 1, j); 
+                visited[i - 1][j] = false; 
+                s.push(temp1); 
+            } 
+        } 
+  
+        // Checking the left way
+        else if (d == 1) { 
+            if (j - 1 >= 0 and maze[i][j - 1] and  
+                                    visited[i][j - 1]) { 
+                node temp1(i, j - 1); 
+                visited[i][j - 1] = false; 
+                s.push(temp1); 
+            } 
+        } 
+  
+        // Checking the down direction 
+        else if (d == 2) { 
+            if (i + 1 < n and maze[i + 1][j] and  
+                                    visited[i + 1][j]) { 
+                node temp1(i + 1, j); 
+                visited[i + 1][j] = false; 
+                s.push(temp1); 
+            } 
+        } 
+        // Checking the right way
+        else if (d == 3) { 
+            if (j + 1 < m and maze[i][j + 1] and  
+                                    visited[i][j + 1]) { 
+                node temp1(i, j + 1); 
+                visited[i][j + 1] = false; 
+                s.push(temp1); 
+            } 
+        } 
+  
+        // If none of the ways can take  
+        // the person retract back  
+        // to the way where the he or she came from. 
+        else { 
+            visited[temp.x][temp.y] = true; 
+            s.pop(); 
+        } 
+    } 
+  
+    // If the stack is empty and 
+    // no exit is found return false. 
+    return false; 
+} 
+  
+// Driver code 
+int main() 
+{ 
+    // Initially setting the visited 
+    // array to true (unvisited) 
+    memset(visited, true, sizeof(visited)); 
+      
+    // Maze matrix 
+    int maze[N][M] = { 
+        { 1, 0, 1, 1, 0 }, 
+        { 1, 1, 1, 0, 1 }, 
+        { 0, 1, 0, 1, 1 }, 
+        { 1, 1, 1, 1, 1 } 
+    }; 
+      //ways to get the exit 
+    wx = 2; 
+    wy = 3; 
+  
+    if (isReachable(maze)) { 
+        cout << "You found the exit." << '\n'; 
+    } 
+    else
+cout << "You are in the wrong way, no exit found." << '\n'; 
+          
+    return 0; 
+} 
